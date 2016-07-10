@@ -38,6 +38,8 @@ char color_on[9] = "cb4b16b2";
 char color_off[9] = "0000007f";
 char color_shadow[9] = "0000007f";
 
+char *klok_font = "monospace";
+
 // 11x10 (WxH)
 struct letter {
     const char *letter;
@@ -85,7 +87,7 @@ static void
 klok_init(cairo_t *cairo)
 {
     cairo_select_font_face(cairo,
-                           "monospace",
+                           klok_font,
                            CAIRO_FONT_SLANT_NORMAL,
                            CAIRO_FONT_WEIGHT_BOLD);
 

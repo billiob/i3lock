@@ -71,6 +71,7 @@ bool klok_mode = false;
 extern char color_on[9];
 extern char color_off[9];
 extern char color_shadow[9];
+extern char *klok_font;
 
 static struct xkb_state *xkb_state;
 static struct xkb_context *xkb_context;
@@ -792,6 +793,7 @@ int main(int argc, char *argv[]) {
         {"klok:on", required_argument, NULL, 0},
         {"klok:off", required_argument, NULL, 0},
         {"klok:shadow", required_argument, NULL, 0},
+        {"klok:font", required_argument, NULL, 0},
         {NULL, no_argument, NULL, 0}};
 
     if ((pw = getpwuid(getuid())) == NULL)
@@ -897,6 +899,9 @@ int main(int argc, char *argv[]) {
                         errx(EXIT_FAILURE, "klok:shadow is invalid, it must be given in 3-byte or 4-byte hexadecimal format: rrggbb or rrggbbaa\n");
                     break;
                 }
+                if (strcmp(longopts[optind].name, "klok:font") == 0) {
+                    klok_font = strdup(optarg);
+                }
             case 'f':
                 show_failed_attempts = true;
                 break;
@@ -906,7 +911,7 @@ int main(int argc, char *argv[]) {
             default:
                 errx(EXIT_FAILURE, "Syntax: i3lock [-v] [-n] [-b] [-d] [-c color] [-u] [-p win|default]"
                                    " [-i image.png] [-t] [-e] [-I timeout] [-f]"
-                                   " [-k] [--klok:on color] [--klok:off color] [--klok:shadow]");
+                                   " [-k] [--klok:on color] [--klok:off color] [--klok:shadow] [--klok:font font_name]");
         }
     }
 
