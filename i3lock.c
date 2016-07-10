@@ -68,6 +68,9 @@ extern pam_state_t pam_state;
 int failed_attempts = 0;
 bool show_failed_attempts = false;
 bool klok_mode = false;
+extern char color_on[9];
+extern char color_off[9];
+extern char color_shadow[9];
 
 static struct xkb_state *xkb_state;
 static struct xkb_context *xkb_context;
@@ -786,6 +789,9 @@ int main(int argc, char *argv[]) {
         {"ignore-empty-password", no_argument, NULL, 'e'},
         {"inactivity-timeout", required_argument, NULL, 'I'},
         {"show-failed-attempts", no_argument, NULL, 'f'},
+        {"klok:on", required_argument, NULL, 0},
+        {"klok:off", required_argument, NULL, 0},
+        {"klok:shadow", required_argument, NULL, 0},
         {NULL, no_argument, NULL, 0}};
 
     if ((pw = getpwuid(getuid())) == NULL)
@@ -848,9 +854,49 @@ int main(int argc, char *argv[]) {
                 ignore_empty_password = true;
                 break;
             case 0:
-                if (strcmp(longopts[optind].name, "debug") == 0)
+                if (strcmp(longopts[optind].name, "debug") == 0) {
                     debug_mode = true;
-                break;
+                    break;
+                }
+                if (strcmp(longopts[optind].name, "klok:on") == 0) {
+                    size_t len;
+                    char *arg = optarg;
+                    /* Skip # if present */
+                    if (arg[0] == '#')
+                        arg++;
+                    len = strlen(arg);
+                    if ((len != 6 && len != 8) ||
+                        ((len == 6 && sscanf(arg, "%06[0-9a-fA-F]", color_on) != 1) ||
+                         (len == 8 && sscanf(arg, "%08[0-9a-fA-F]", color_on) != 1)))
+                        errx(EXIT_FAILURE, "klok:on is invalid, it must be given in 3-byte or 4-byte hexadecimal format: rrggbb or rrggbbaa\n");
+                    break;
+                }
+                if (strcmp(longopts[optind].name, "klok:off") == 0) {
+                    size_t len;
+                    char *arg = optarg;
+                    /* Skip # if present */
+                    if (arg[0] == '#')
+                        arg++;
+                    len = strlen(arg);
+                    if ((len != 6 && len != 8) ||
+                        ((len == 6 && sscanf(arg, "%06[0-9a-fA-F]", color_off) != 1) ||
+                         (len == 8 && sscanf(arg, "%08[0-9a-fA-F]", color_off) != 1)))
+                        errx(EXIT_FAILURE, "klok:off is invalid, it must be given in 3-byte or 4-byte hexadecimal format: rrggbb or rrggbbaa\n");
+                    break;
+                }
+                if (strcmp(longopts[optind].name, "klok:shadow") == 0) {
+                    size_t len;
+                    char *arg = optarg;
+                    /* Skip # if present */
+                    if (arg[0] == '#')
+                        arg++;
+                    len = strlen(arg);
+                    if ((len != 6 && len != 8) ||
+                        ((len == 6 && sscanf(arg, "%06[0-9a-fA-F]", color_shadow) != 1) ||
+                         (len == 8 && sscanf(arg, "%08[0-9a-fA-F]", color_shadow) != 1)))
+                        errx(EXIT_FAILURE, "klok:shadow is invalid, it must be given in 3-byte or 4-byte hexadecimal format: rrggbb or rrggbbaa\n");
+                    break;
+                }
             case 'f':
                 show_failed_attempts = true;
                 break;
@@ -859,7 +905,8 @@ int main(int argc, char *argv[]) {
                 break;
             default:
                 errx(EXIT_FAILURE, "Syntax: i3lock [-v] [-n] [-b] [-d] [-c color] [-u] [-p win|default]"
-                                   " [-i image.png] [-t] [-e] [-I timeout] [-f] [-k]");
+                                   " [-i image.png] [-t] [-e] [-I timeout] [-f]"
+                                   " [-k] [--klok:on color] [--klok:off color] [--klok:shadow]");
         }
     }
 

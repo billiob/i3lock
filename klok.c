@@ -34,6 +34,9 @@ static struct color {
     double a;
 } on, off, shadow;
 
+char color_on[9] = "cb4b16b2";
+char color_off[9] = "0000007f";
+char color_shadow[9] = "0000007f";
 
 // 11x10 (WxH)
 struct letter {
@@ -45,6 +48,38 @@ struct letter {
 #define NB_HEIGHT 10
 static struct letter letters[NB_HEIGHT][NB_WIDTH] = {};
 
+static int
+char_to_int(const char c)
+{
+    int i;
+    i = c - '0';
+    if (i > 16)
+        i -= 'a' - 'A';
+    return i;
+}
+
+static double
+hex_string_to_double(const char *str)
+{
+    int r;
+    r = char_to_int(str[0]) * 16 + char_to_int(str[1]);
+    return r / 255.0;
+}
+
+static void
+string_to_color(const char *color, struct color *c)
+{
+    size_t len = strlen(color);
+
+    c->r = hex_string_to_double(color);
+    c->g = hex_string_to_double(color+2);
+    c->b = hex_string_to_double(color+4);
+
+    if (len == 6)
+        c->a = 1.0;
+    else
+        c->a = hex_string_to_double(color+6);
+}
 
 static void
 klok_init(cairo_t *cairo)
@@ -54,18 +89,9 @@ klok_init(cairo_t *cairo)
                            CAIRO_FONT_SLANT_NORMAL,
                            CAIRO_FONT_WEIGHT_BOLD);
 
-    on.r = 0.796;
-    on.g = 0.294;
-    on.b = 0.086;
-    on.a = 0.9;
-    off.r = 0;
-    off.g = 0;
-    off.b = 0;
-    off.a = 0.9;
-    shadow.r = 0;
-    shadow.g = 0;
-    shadow.b = 0;
-    shadow.a = 0.7;
+    string_to_color(color_on, &on);
+    string_to_color(color_off, &off);
+    string_to_color(color_shadow, &shadow);
 
     letters[0][0].letter = "I";
     letters[0][1].letter = "T";
