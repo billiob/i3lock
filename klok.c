@@ -23,6 +23,15 @@
 
 extern bool debug_mode;
 
+static double font_size;
+
+static struct color {
+    double r;
+    double g;
+    double b;
+    double a;
+} on, off, shadow;
+
 
 // 11x10 (WxH)
 struct letter {
@@ -42,6 +51,20 @@ klok_init(cairo_t *cairo)
                            "monospace",
                            CAIRO_FONT_SLANT_NORMAL,
                            CAIRO_FONT_WEIGHT_BOLD);
+
+    on.r = 0.796;
+    on.g = 0.294;
+    on.b = 0.086;
+    on.a = 0.9;
+    off.r = 0;
+    off.g = 0;
+    off.b = 0;
+    off.a = 0.9;
+    shadow.r = 0;
+    shadow.g = 0;
+    shadow.b = 0;
+    shadow.a = 0.7;
+
     letters[0][0].letter = "I";
     letters[0][1].letter = "T";
     letters[0][2].letter = "L"; // RANDOM
@@ -166,7 +189,248 @@ klok_init(cairo_t *cairo)
 static void
 switch_letters_on(void)
 {
-    /* TODO */
+    struct tm tm;
+    time_t t = time(NULL);
+    int x, y;
+
+    localtime_r(&t, &tm);
+
+    /* Clear previous run */
+    for (y = 0; y < NB_HEIGHT; y++) {
+        for (x = 0; x < NB_WIDTH; x++) {
+            letters[y][x].is_on = false;
+        }
+    }
+    /* IT IS */
+    letters[0][0].is_on = true;
+    letters[0][1].is_on = true;
+    letters[0][3].is_on = true;
+    letters[0][4].is_on = true;
+
+    /* A QUARTER */
+    if ((15 <= tm.tm_min && tm.tm_min < 20)
+        ||  (45 <= tm.tm_min && tm.tm_min < 50))
+    {
+        letters[1][0].is_on = true;
+        letters[1][2].is_on = true;
+        letters[1][3].is_on = true;
+        letters[1][4].is_on = true;
+        letters[1][5].is_on = true;
+        letters[1][6].is_on = true;
+        letters[1][7].is_on = true;
+        letters[1][8].is_on = true;
+    }
+    /* TWENTY */
+    if ((20 <= tm.tm_min && tm.tm_min < 30)
+        ||  (35 <= tm.tm_min && tm.tm_min < 45))
+    {
+        letters[2][0].is_on = true;
+        letters[2][1].is_on = true;
+        letters[2][2].is_on = true;
+        letters[2][3].is_on = true;
+        letters[2][4].is_on = true;
+        letters[2][5].is_on = true;
+    }
+
+    /* FIVE */
+    if ((5 <= tm.tm_min && tm.tm_min < 10)
+        ||  (25 <= tm.tm_min && tm.tm_min < 30)
+        ||  (35 <= tm.tm_min && tm.tm_min < 40)
+        ||  (55 <= tm.tm_min && tm.tm_min < 60))
+    {
+        letters[2][6].is_on = true;
+        letters[2][7].is_on = true;
+        letters[2][8].is_on = true;
+        letters[2][9].is_on = true;
+    }
+
+    /* HALF */
+    if (30 <= tm.tm_min && tm.tm_min < 35) {
+        letters[3][0].is_on = true;
+        letters[3][1].is_on = true;
+        letters[3][2].is_on = true;
+        letters[3][3].is_on = true;
+    }
+
+    /* TEN */
+    if ((10 <= tm.tm_min && tm.tm_min < 15)
+        ||  (50 <= tm.tm_min && tm.tm_min < 55))
+    {
+        letters[3][5].is_on = true;
+        letters[3][6].is_on = true;
+        letters[3][7].is_on = true;
+    }
+
+    /* TO */
+    if (35 <= tm.tm_min && tm.tm_min < 60) {
+        letters[3][9].is_on = true;
+        letters[3][10].is_on = true;
+    }
+
+    /* PAST */
+    if (5 <= tm.tm_min && tm.tm_min < 35) {
+        letters[4][0].is_on = true;
+        letters[4][1].is_on = true;
+        letters[4][2].is_on = true;
+        letters[4][3].is_on = true;
+    }
+
+    /* NINE */
+    if (((tm.tm_hour == 8 || tm.tm_hour == 20) &&
+         (tm.tm_min >= 35 ))
+        || ((tm.tm_hour == 9 || tm.tm_hour == 21) &&
+            (0 <= tm.tm_min && tm.tm_min < 35 )))
+    {
+        letters[4][7].is_on = true;
+        letters[4][8].is_on = true;
+        letters[4][9].is_on = true;
+        letters[4][10].is_on = true;
+    }
+
+    /* ONE */
+    if (((tm.tm_hour == 0 || tm.tm_hour == 12) &&
+         (tm.tm_min >= 35 ))
+        || ((tm.tm_hour == 1 || tm.tm_hour == 13) &&
+            (0 <= tm.tm_min && tm.tm_min < 35 )))
+    {
+        letters[5][0].is_on = true;
+        letters[5][1].is_on = true;
+        letters[5][2].is_on = true;
+    }
+
+    /* SIX */
+    if (((tm.tm_hour == 5 || tm.tm_hour == 17) &&
+         (tm.tm_min >= 35 ))
+        || ((tm.tm_hour == 6 || tm.tm_hour == 18) &&
+            (0 <= tm.tm_min && tm.tm_min < 35 )))
+    {
+        letters[5][3].is_on = true;
+        letters[5][4].is_on = true;
+        letters[5][5].is_on = true;
+    }
+
+    /* THREE */
+    if (((tm.tm_hour == 2 || tm.tm_hour == 14) &&
+         (tm.tm_min >= 35 ))
+        || ((tm.tm_hour == 3 || tm.tm_hour == 15) &&
+            (0 <= tm.tm_min && tm.tm_min < 35 )))
+    {
+        letters[5][6].is_on = true;
+        letters[5][7].is_on = true;
+        letters[5][8].is_on = true;
+        letters[5][9].is_on = true;
+        letters[5][10].is_on = true;
+    }
+
+    /* FOUR */
+    if (((tm.tm_hour == 3 || tm.tm_hour == 15) &&
+         (tm.tm_min >= 35 ))
+        || ((tm.tm_hour == 4 || tm.tm_hour == 16) &&
+            (0 <= tm.tm_min && tm.tm_min < 35 )))
+    {
+        letters[6][0].is_on = true;
+        letters[6][1].is_on = true;
+        letters[6][2].is_on = true;
+        letters[6][3].is_on = true;
+    }
+
+    /* FIVE */
+    if (((tm.tm_hour == 4 || tm.tm_hour == 16) &&
+         (tm.tm_min >= 35 ))
+        || ((tm.tm_hour == 5 || tm.tm_hour == 17) &&
+            (0 <= tm.tm_min && tm.tm_min < 35 )))
+    {
+        letters[6][4].is_on = true;
+        letters[6][5].is_on = true;
+        letters[6][6].is_on = true;
+        letters[6][7].is_on = true;
+    }
+
+    /* TWO */
+    if (((tm.tm_hour == 1 || tm.tm_hour == 13) &&
+         (tm.tm_min >= 35 ))
+        || ((tm.tm_hour == 2 || tm.tm_hour == 14) &&
+            (0 <= tm.tm_min && tm.tm_min < 35 )))
+    {
+        letters[6][8].is_on = true;
+        letters[6][9].is_on = true;
+        letters[6][10].is_on = true;
+    }
+
+    /* EIGHT */
+    if (((tm.tm_hour == 7 || tm.tm_hour == 19) &&
+         (tm.tm_min >= 35 ))
+        || ((tm.tm_hour == 8 || tm.tm_hour == 20) &&
+            (0 <= tm.tm_min && tm.tm_min < 35 )))
+    {
+        letters[7][0].is_on = true;
+        letters[7][1].is_on = true;
+        letters[7][2].is_on = true;
+        letters[7][3].is_on = true;
+        letters[7][4].is_on = true;
+    }
+
+    /* ELEVEN */
+    if (((tm.tm_hour == 10 || tm.tm_hour == 22) &&
+         (tm.tm_min >= 35 ))
+        || ((tm.tm_hour == 11 || tm.tm_hour == 23) &&
+            (0 <= tm.tm_min && tm.tm_min < 35 )))
+    {
+        letters[7][5].is_on = true;
+        letters[7][6].is_on = true;
+        letters[7][7].is_on = true;
+        letters[7][8].is_on = true;
+        letters[7][9].is_on = true;
+        letters[7][10].is_on = true;
+    }
+
+    /* SEVEN */
+    if (((tm.tm_hour == 6 || tm.tm_hour == 18) &&
+         (tm.tm_min >= 35 ))
+        || ((tm.tm_hour == 7 || tm.tm_hour == 19) &&
+            (0 <= tm.tm_min && tm.tm_min < 35 )))
+    {
+        letters[8][0].is_on = true;
+        letters[8][1].is_on = true;
+        letters[8][2].is_on = true;
+        letters[8][3].is_on = true;
+        letters[8][4].is_on = true;
+    }
+
+    /* TWELVE */
+    if (((tm.tm_hour == 11 || tm.tm_hour == 23) &&
+         (tm.tm_min >= 35 ))
+        || ((tm.tm_hour == 0 || tm.tm_hour == 12) &&
+            (0 <= tm.tm_min && tm.tm_min < 35 )))
+    {
+        letters[8][5].is_on = true;
+        letters[8][6].is_on = true;
+        letters[8][7].is_on = true;
+        letters[8][8].is_on = true;
+        letters[8][9].is_on = true;
+        letters[8][10].is_on = true;
+    }
+
+    /* TEN */
+    if (((tm.tm_hour == 9 || tm.tm_hour == 21) &&
+         (tm.tm_min >= 35 ))
+        || ((tm.tm_hour == 10 || tm.tm_hour == 22) &&
+            (0 <= tm.tm_min && tm.tm_min < 35 )))
+    {
+        letters[9][0].is_on = true;
+        letters[9][1].is_on = true;
+        letters[9][2].is_on = true;
+    }
+
+    /* OCLOCK */
+    if (0 <= tm.tm_min && tm.tm_min < 5) {
+        letters[9][5].is_on = true;
+        letters[9][6].is_on = true;
+        letters[9][7].is_on = true;
+        letters[9][8].is_on = true;
+        letters[9][9].is_on = true;
+        letters[9][10].is_on = true;
+    }
 }
 
 static void
@@ -197,6 +461,7 @@ find_best_text_size(cairo_t *cr,
     cairo_set_font_size(cr, size);
     sf = cairo_get_scaled_font(cr);
     cairo_scaled_font_text_extents(sf, "W", exts);
+    font_size = size;
 }
 
 static void
@@ -207,10 +472,14 @@ draw_letter(cairo_t *cr,
 {
     cairo_move_to(cr, off_x, off_y);
     cairo_text_path(cr, letter->letter);
-    cairo_set_source_rgb(cr, 0.5, 0.5, 1);
+    if (letter->is_on) {
+        cairo_set_source_rgba(cr, on.r, on.g, on.b, on.a);
+    } else {
+        cairo_set_source_rgba(cr, off.r, off.g, off.g, off.a);
+    }
     cairo_fill_preserve(cr);
-    cairo_set_source_rgb(cr, 0, 0, 0);
-    cairo_set_line_width(cr, 2.56);
+    cairo_set_source_rgba(cr, shadow.r, shadow.g, shadow.b, shadow.a);
+    cairo_set_line_width(cr, font_size / 25.0);
     cairo_stroke(cr);
 }
 
@@ -238,8 +507,8 @@ draw_letters(cairo_t *cr,
           sq, orig_y_offset, orig_x_offset);
 
 
-    max_letter_width = 9 * sq / (10 * 11);
-    max_letter_height= 9 * sq / (10 * 10);
+    max_letter_width = 8 * sq / (10 * 11);
+    max_letter_height= 8 * sq / (10 * 10);
 
     DEBUG("max_letter_width=%d max_letter_height=%d\n",
           max_letter_width, max_letter_height);
