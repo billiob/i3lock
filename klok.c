@@ -19,9 +19,11 @@
 #include <cairo/cairo-xcb.h>
 
 #include "i3lock.h"
+#include "unlock_indicator.h"
 #include "klok.h"
 
 extern bool debug_mode;
+extern struct ev_loop *main_loop;
 
 static double font_size;
 
@@ -540,4 +542,27 @@ draw_klok(cairo_t *cairo,
     klok_init(cairo);
     switch_letters_on();
     draw_letters(cairo, resolution_w, resolution_h);
+}
+
+static void
+time_change(struct ev_loop *loop, ev_timer *w, int revents)
+{
+    redraw_screen();
+}
+
+void
+klok_add_timer(void)
+{
+    ev_timer *timer;
+    struct tm tm;
+    time_t t = time(NULL);
+
+    localtime_r(&t, &tm);
+    timer = calloc(sizeof(struct ev_timer), 1);
+
+    ev_timer_init(timer, time_change,
+                  5 * 60 - ((tm.tm_min % 5) * 60 + tm.tm_sec),
+                  5 * 60);
+    ev_timer_start(main_loop, timer);
+
 }

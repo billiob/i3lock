@@ -1014,5 +1014,8 @@ int main(int argc, char *argv[]) {
      * received up until now. ev will only pick up new events (when the X11
      * file descriptor becomes readable). */
     ev_invoke(main_loop, xcb_check, 0);
+
+    if (klok_mode)
+        klok_add_timer();
     ev_loop(main_loop, 0);
 }
