@@ -475,8 +475,6 @@ find_best_text_size(cairo_t *cr,
         cairo_set_font_size(cr, size);
         sf = cairo_get_scaled_font(cr);
         cairo_scaled_font_text_extents(sf, "W", &extents);
-        DEBUG("size:%f width:%f height:%f\n",
-              size, extents.width, extents.height);
         if (extents.width > max_letter_width ||
             extents.height > max_letter_height) {
             size -= 1.0;
@@ -485,7 +483,6 @@ find_best_text_size(cairo_t *cr,
 
         size += 1.0;
     }
-    DEBUG("final size: %f\n", size);
     cairo_set_font_size(cr, size);
     sf = cairo_get_scaled_font(cr);
     cairo_scaled_font_text_extents(sf, "W", exts);
@@ -531,21 +528,13 @@ draw_letters(cairo_t *cr,
 
     orig_y_offset = (resolution_h - sq) / 2;
     orig_x_offset = (resolution_w - sq) / 2;
-    DEBUG("sq=%d orig_y_offset=%d orig_x_offset=%d\n",
-          sq, orig_y_offset, orig_x_offset);
-
-
     max_letter_width = 8 * sq / (10 * 11);
     max_letter_height= 8 * sq / (10 * 10);
-
-    DEBUG("max_letter_width=%d max_letter_height=%d\n",
-          max_letter_width, max_letter_height);
 
     find_best_text_size(cr, max_letter_width, max_letter_height,
                         &extents);
     dx = (sq - NB_WIDTH * extents.width) / (NB_WIDTH - 1);
     dy = (sq - NB_HEIGHT * extents.height) / (NB_HEIGHT - 1);
-    DEBUG("dx=%d dy=%d\n", dx, dy);
     for (y = 0; y < NB_HEIGHT; y++) {
         for (x = 0; x < NB_WIDTH; x++) {
             uint32_t off_x, off_y;
@@ -562,9 +551,6 @@ draw_klok(cairo_t *cairo,
           uint32_t resolution_w,
           uint32_t resolution_h)
 {
-    DEBUG("resolution_w:%d resolution_h:%d\n",
-          resolution_w, resolution_h);
-
     klok_init(cairo);
     switch_letters_on();
     draw_letters(cairo, resolution_w, resolution_h);
