@@ -42,7 +42,7 @@ char *klok_font = "monospace";
 
 // 11x10 (WxH)
 struct letter {
-    const char *letter;
+    char letter[2];
     bool is_on;
 };
 
@@ -83,137 +83,152 @@ string_to_color(const char *color, struct color *c)
         c->a = hex_string_to_double(color+6);
 }
 
+static char
+random_letter(void)
+{
+    return 'A' + rand() % ('Z'-'A');
+}
+
 static void
 klok_init(cairo_t *cairo)
 {
+    static bool letters_inited = false;
+
     cairo_select_font_face(cairo,
                            klok_font,
                            CAIRO_FONT_SLANT_NORMAL,
                            CAIRO_FONT_WEIGHT_BOLD);
 
+    if (letters_inited)
+        return;
+
     string_to_color(color_on, &on);
     string_to_color(color_off, &off);
     string_to_color(color_shadow, &shadow);
 
-    letters[0][0].letter = "I";
-    letters[0][1].letter = "T";
-    letters[0][2].letter = "L"; // RANDOM
-    letters[0][3].letter = "I";
-    letters[0][4].letter = "S";
-    letters[0][5].letter = "A"; // RANDOM
-    letters[0][6].letter = "S"; // RANDOM
-    letters[0][7].letter = "T"; // RANDOM
-    letters[0][8].letter = "I"; // RANDOM
-    letters[0][9].letter = "M"; // RANDOM
-    letters[0][10].letter = "E"; // RANDOM
+    srand(time(NULL));
 
-    letters[1][0].letter = "A";
-    letters[1][1].letter = "C"; // RANDOM
-    letters[1][2].letter = "Q";
-    letters[1][3].letter = "U";
-    letters[1][4].letter = "A";
-    letters[1][5].letter = "R";
-    letters[1][6].letter = "T";
-    letters[1][7].letter = "E";
-    letters[1][8].letter = "R";
-    letters[1][9].letter = "D"; // RANDOM
-    letters[1][10].letter = "C"; // RANDOM
+    letters[0][0].letter[0] = 'I';
+    letters[0][1].letter[0] = 'T';
+    letters[0][2].letter[0] = random_letter();
+    letters[0][3].letter[0] = 'I';
+    letters[0][4].letter[0] = 'S';
+    letters[0][5].letter[0] = random_letter();
+    letters[0][6].letter[0] = random_letter();
+    letters[0][7].letter[0] = random_letter();
+    letters[0][8].letter[0] = random_letter();
+    letters[0][9].letter[0] = random_letter();
+    letters[0][10].letter[0] = random_letter();
 
-    letters[2][0].letter = "T";
-    letters[2][1].letter = "W";
-    letters[2][2].letter = "E";
-    letters[2][3].letter = "N";
-    letters[2][4].letter = "T";
-    letters[2][5].letter = "Y";
-    letters[2][6].letter = "F";
-    letters[2][7].letter = "I";
-    letters[2][8].letter = "V";
-    letters[2][9].letter = "E";
-    letters[2][10].letter = "X"; // RANDOM
+    letters[1][0].letter[0] = 'A';
+    letters[1][1].letter[0] = random_letter();
+    letters[1][2].letter[0] = 'Q';
+    letters[1][3].letter[0] = 'U';
+    letters[1][4].letter[0] = 'A';
+    letters[1][5].letter[0] = 'R';
+    letters[1][6].letter[0] = 'T';
+    letters[1][7].letter[0] = 'E';
+    letters[1][8].letter[0] = 'R';
+    letters[1][9].letter[0] = random_letter();
+    letters[1][10].letter[0] = random_letter();
 
-    letters[3][0].letter = "H";
-    letters[3][1].letter = "A";
-    letters[3][2].letter = "L";
-    letters[3][3].letter = "F";
-    letters[3][4].letter = "B"; // RANDOM
-    letters[3][5].letter = "T";
-    letters[3][6].letter = "E";
-    letters[3][7].letter = "N";
-    letters[3][8].letter = "F"; // RANDOM
-    letters[3][9].letter = "T";
-    letters[3][10].letter = "O";
+    letters[2][0].letter[0] = 'T';
+    letters[2][1].letter[0] = 'W';
+    letters[2][2].letter[0] = 'E';
+    letters[2][3].letter[0] = 'N';
+    letters[2][4].letter[0] = 'T';
+    letters[2][5].letter[0] = 'Y';
+    letters[2][6].letter[0] = 'F';
+    letters[2][7].letter[0] = 'I';
+    letters[2][8].letter[0] = 'V';
+    letters[2][9].letter[0] = 'E';
+    letters[2][10].letter[0] = random_letter();
 
-    letters[4][0].letter = "P";
-    letters[4][1].letter = "A";
-    letters[4][2].letter = "S";
-    letters[4][3].letter = "T";
-    letters[4][4].letter = "E"; // RANDOM
-    letters[4][5].letter = "R"; // RANDOM
-    letters[4][6].letter = "U"; // RANDOM
-    letters[4][7].letter = "N";
-    letters[4][8].letter = "I";
-    letters[4][9].letter = "N";
-    letters[4][10].letter = "E";
+    letters[3][0].letter[0] = 'H';
+    letters[3][1].letter[0] = 'A';
+    letters[3][2].letter[0] = 'L';
+    letters[3][3].letter[0] = 'F';
+    letters[3][4].letter[0] = random_letter();
+    letters[3][5].letter[0] = 'T';
+    letters[3][6].letter[0] = 'E';
+    letters[3][7].letter[0] = 'N';
+    letters[3][8].letter[0] = random_letter();
+    letters[3][9].letter[0] = 'T';
+    letters[3][10].letter[0] = 'O';
 
-    letters[5][0].letter = "O";
-    letters[5][1].letter = "N";
-    letters[5][2].letter = "E";
-    letters[5][3].letter = "S";
-    letters[5][4].letter = "I";
-    letters[5][5].letter = "X";
-    letters[5][6].letter = "T";
-    letters[5][7].letter = "H";
-    letters[5][8].letter = "R";
-    letters[5][9].letter = "E";
-    letters[5][10].letter = "E";
+    letters[4][0].letter[0] = 'P';
+    letters[4][1].letter[0] = 'A';
+    letters[4][2].letter[0] = 'S';
+    letters[4][3].letter[0] = 'T';
+    letters[4][4].letter[0] = random_letter();
+    letters[4][5].letter[0] = random_letter();
+    letters[4][6].letter[0] = random_letter();
+    letters[4][7].letter[0] = 'N';
+    letters[4][8].letter[0] = 'I';
+    letters[4][9].letter[0] = 'N';
+    letters[4][10].letter[0] = 'E';
 
-    letters[6][0].letter = "F";
-    letters[6][1].letter = "O";
-    letters[6][2].letter = "U";
-    letters[6][3].letter = "R";
-    letters[6][4].letter = "F";
-    letters[6][5].letter = "I";
-    letters[6][6].letter = "V";
-    letters[6][7].letter = "E";
-    letters[6][8].letter = "T";
-    letters[6][9].letter = "W";
-    letters[6][10].letter = "O";
+    letters[5][0].letter[0] = 'O';
+    letters[5][1].letter[0] = 'N';
+    letters[5][2].letter[0] = 'E';
+    letters[5][3].letter[0] = 'S';
+    letters[5][4].letter[0] = 'I';
+    letters[5][5].letter[0] = 'X';
+    letters[5][6].letter[0] = 'T';
+    letters[5][7].letter[0] = 'H';
+    letters[5][8].letter[0] = 'R';
+    letters[5][9].letter[0] = 'E';
+    letters[5][10].letter[0] = 'E';
 
-    letters[7][0].letter = "E";
-    letters[7][1].letter = "I";
-    letters[7][2].letter = "G";
-    letters[7][3].letter = "H";
-    letters[7][4].letter = "T";
-    letters[7][5].letter = "E";
-    letters[7][6].letter = "L";
-    letters[7][7].letter = "E";
-    letters[7][8].letter = "V";
-    letters[7][9].letter = "E";
-    letters[7][10].letter = "N";
+    letters[6][0].letter[0] = 'F';
+    letters[6][1].letter[0] = 'O';
+    letters[6][2].letter[0] = 'U';
+    letters[6][3].letter[0] = 'R';
+    letters[6][4].letter[0] = 'F';
+    letters[6][5].letter[0] = 'I';
+    letters[6][6].letter[0] = 'V';
+    letters[6][7].letter[0] = 'E';
+    letters[6][8].letter[0] = 'T';
+    letters[6][9].letter[0] = 'W';
+    letters[6][10].letter[0] = 'O';
 
-    letters[8][0].letter = "S";
-    letters[8][1].letter = "E";
-    letters[8][2].letter = "V";
-    letters[8][3].letter = "E";
-    letters[8][4].letter = "N";
-    letters[8][5].letter = "T";
-    letters[8][6].letter = "W";
-    letters[8][7].letter = "E";
-    letters[8][8].letter = "L";
-    letters[8][9].letter = "V";
-    letters[8][10].letter = "E";
+    letters[7][0].letter[0] = 'E';
+    letters[7][1].letter[0] = 'I';
+    letters[7][2].letter[0] = 'G';
+    letters[7][3].letter[0] = 'H';
+    letters[7][4].letter[0] = 'T';
+    letters[7][5].letter[0] = 'E';
+    letters[7][6].letter[0] = 'L';
+    letters[7][7].letter[0] = 'E';
+    letters[7][8].letter[0] = 'V';
+    letters[7][9].letter[0] = 'E';
+    letters[7][10].letter[0] = 'N';
 
-    letters[9][0].letter = "T";
-    letters[9][1].letter = "E";
-    letters[9][2].letter = "N";
-    letters[9][3].letter = "S"; // RANDOM
-    letters[9][4].letter = "E"; // RANDOM
-    letters[9][5].letter = "O";
-    letters[9][6].letter = "C";
-    letters[9][7].letter = "L";
-    letters[9][8].letter = "O";
-    letters[9][9].letter = "C";
-    letters[9][10].letter = "K";
+    letters[8][0].letter[0] = 'S';
+    letters[8][1].letter[0] = 'E';
+    letters[8][2].letter[0] = 'V';
+    letters[8][3].letter[0] = 'E';
+    letters[8][4].letter[0] = 'N';
+    letters[8][5].letter[0] = 'T';
+    letters[8][6].letter[0] = 'W';
+    letters[8][7].letter[0] = 'E';
+    letters[8][8].letter[0] = 'L';
+    letters[8][9].letter[0] = 'V';
+    letters[8][10].letter[0] = 'E';
+
+    letters[9][0].letter[0] = 'T';
+    letters[9][1].letter[0] = 'E';
+    letters[9][2].letter[0] = 'N';
+    letters[9][3].letter[0] = random_letter();
+    letters[9][4].letter[0] = random_letter();
+    letters[9][5].letter[0] = 'O';
+    letters[9][6].letter[0] = 'C';
+    letters[9][7].letter[0] = 'L';
+    letters[9][8].letter[0] = 'O';
+    letters[9][9].letter[0] = 'C';
+    letters[9][10].letter[0] = 'K';
+
+    letters_inited = true;
 }
 
 static void
