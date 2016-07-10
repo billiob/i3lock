@@ -61,6 +61,9 @@ extern bool show_failed_attempts;
 /* Number of failed unlock attempts. */
 extern int failed_attempts;
 
+extern bool klok_mode;
+
+
 /*******************************************************************************
  * Variables defined in xcb.c.
  ******************************************************************************/
@@ -138,6 +141,10 @@ xcb_pixmap_t draw_image(uint32_t *resolution) {
         cairo_set_source_rgb(xcb_ctx, rgb16[0] / 255.0, rgb16[1] / 255.0, rgb16[2] / 255.0);
         cairo_rectangle(xcb_ctx, 0, 0, resolution[0], resolution[1]);
         cairo_fill(xcb_ctx);
+    }
+
+    if (klok_mode) {
+        draw_klok(xcb_ctx, resolution[0], resolution[1]);
     }
 
     if (unlock_indicator &&
